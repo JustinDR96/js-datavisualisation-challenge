@@ -10,7 +10,7 @@ canvas.height = 200; // Hauteur du canvas
 var table = document.getElementById("table1");
 
 // Insérez le canvas juste après la table
-table.parentNode.insertBefore(canvas, table.nextSibling);
+table.parentNode.insertBefore(canvas, table);
 
 var table = document.getElementById("table1");
 var labels = [];
@@ -55,7 +55,7 @@ canvas.height = 200; // Hauteur du canvas
 var table = document.getElementById("table2");
 
 // Insérez le canvas juste après la table
-table.parentNode.insertBefore(canvas, table.nextSibling);
+table.parentNode.insertBefore(canvas, table);
 
 var table = document.getElementById("table2");
 var labels = [];
@@ -71,7 +71,7 @@ for (var i = 2; i < table.rows.length; i++) {
 var ctx = document.getElementById("myChart2").getContext("2d");
 
 var chart = new Chart(ctx, {
-  type: "line", // Choisir le type de graphique (bar, line, etc.)
+  type: "bar", // Choisir le type de graphique (bar, line, etc.)
   data: {
     labels: labels, // Les étiquettes de l'axe des X
     datasets: [
