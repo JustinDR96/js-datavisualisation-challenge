@@ -1,90 +1,61 @@
 // Créez l'élément <canvas>
-var canvas = document.createElement("canvas");
+let canvas = document.createElement("canvas");
 
 // Configurez ses attributs
 canvas.id = "myChart"; // ID du canvas
 canvas.width = 400; // Largeur du canvas
 canvas.height = 200; // Hauteur du canvas
 
-// Sélectionnez la table avec l'ID "table2"
-var table = document.getElementById("table1");
-
-// Insérez le canvas juste après la table
+let table = document.getElementById("table1");
 table.parentNode.insertBefore(canvas, table);
 
-var table = document.getElementById("table1");
-var labels = [];
-var data = [];
+let years = [];
+let countries = [];
+let cells = [];
 
-for (var i = 2; i < table.rows.length; i++) {
-  var row = table.rows[i];
-  labels.push(row.cells[1].textContent);
-  data.push(parseFloat(row.cells[2].textContent.replace(",", ""))); // Convertir les nombres en virgule en nombres décimaux
+const headerRow = table.rows[1];
+for (let j = 2; j < headerRow.cells.length; j++) {
+  years.push(headerRow.cells[j].textContent);
 }
 
-// Créer un graphique à l'aide de Chart.js
-var ctx = document.getElementById("myChart").getContext("2d");
+for (let i = 2; i < table.rows.length; i++) {
+  const row = table.rows[i];
+  countries.push(row.cells[1].textContent);
 
-var chart = new Chart(ctx, {
-  type: "bar", // Choisir le type de graphique (bar, line, etc.)
-  data: {
-    labels: labels, // Les étiquettes de l'axe des X
-    datasets: [
-      {
-        label: "Données",
-        data: data, // Les données à afficher sur le graphique
-        backgroundColor: "rgba(75, 192, 192, 0.2)", // Couleur de remplissage des barres
-        borderColor: "rgba(75, 192, 192, 1)", // Couleur de la bordure des barres
-        borderWidth: 1, // Largeur de la bordure des barres
-      },
-    ],
-  },
-  options: {
-    // Autres options de personnalisation du graphique
-  },
-});
-
-var canvas = document.createElement("canvas");
-
-// Configurez ses attributs
-canvas.id = "myChart2"; // ID du canvas
-canvas.width = 400; // Largeur du canvas
-canvas.height = 200; // Hauteur du canvas
-
-// Sélectionnez la table avec l'ID "table2"
-var table = document.getElementById("table2");
-
-// Insérez le canvas juste après la table
-table.parentNode.insertBefore(canvas, table);
-
-var table = document.getElementById("table2");
-var labels = [];
-var data = [];
-
-for (var i = 2; i < table.rows.length; i++) {
-  var row = table.rows[i];
-  labels.push(row.cells[1].textContent);
-  data.push(parseFloat(row.cells[2].textContent.replace(",", ""))); // Convertir les nombres en virgule en nombres décimaux
+  const rowData = [];
+  for (let j = 2; j < row.cells.length; j++) {
+    rowData.push(parseFloat(row.cells[j].textContent.replace(",", ".")));
+  }
+  cells.push(rowData);
 }
 
+const tableData = { years, countries, cells };
 // Créer un graphique à l'aide de Chart.js
-var ctx = document.getElementById("myChart2").getContext("2d");
+let ctx = canvas.getContext("2d");
 
-var chart = new Chart(ctx, {
+new Chart(ctx, {
   type: "bar", // Choisir le type de graphique (bar, line, etc.)
   data: {
-    labels: labels, // Les étiquettes de l'axe des X
-    datasets: [
-      {
-        label: "Données",
-        data: data, // Les données à afficher sur le graphique
-        backgroundColor: "rgba(75, 192, 192, 0.2)", // Couleur de remplissage des barres
-        borderColor: "rgba(75, 192, 192, 1)", // Couleur de la bordure des barres
-        borderWidth: 1, // Largeur de la bordure des barres
-      },
-    ],
-  },
-  options: {
-    // Autres options de personnalisation du graphique
+    labels: tableData.countries, // Les étiquettes de l'axe des X
+    datasets: tableData.years.map((year, index) => ({
+      label: year,
+      data: tableData.cells.map((row) => row[index]),
+      backgroundColor: [
+        "#ff7979",
+        "#34495e",
+        "#2ecc71",
+        "#e67e22",
+        "#2980b9",
+        "#9b59b6",
+        "#95a5a6",
+        "#bdc3c7",
+        "#6c5ce7",
+        "#6F1E51",
+        "#7ed6df",
+      ],
+      borderColor: "rgba(75, 192, 192, 1)",
+      borderWith: 1,
+      barThickness: 1.5,
+    })),
   },
 });
