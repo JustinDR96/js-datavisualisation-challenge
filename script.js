@@ -56,12 +56,27 @@ new Chart(ctx, {
       borderColor: "rgba(75, 192, 192, 1)",
       borderWith: 1,
       barThickness: 1.5,
-      scales: {
-        y: {
-          beginAtZero: true,
+    })),
+  },
+  options: {
+    scales: {
+      x: {
+        ticks: {
+          font: {
+            size: 10,
+          },
         },
       },
-    })),
+      y: {
+        suggestedMax: 6500,
+        beginAtZero: true,
+        ticks: {
+          font: {
+            size: 10,
+          },
+        },
+      },
+    },
   },
 });
 
@@ -105,16 +120,36 @@ const colors = ["#34495e", "#2ecc71"];
 let ctx2 = canvas2.getContext("2d");
 
 new Chart(ctx2, {
-  type: "bar", // Choisir le type de graphique (bar)
+  type: "bar",
   data: {
-    labels: tableData2.countries, // Les étiquettes de l'axe des X
+    labels: tableData2.countries,
     datasets: tableData2.years.map((year, index) => ({
       label: year,
       data: tableData2.cells.map((row) => row[index]),
-      backgroundColor: colors[index], // Utilisez la couleur correspondante
+      backgroundColor: colors[index],
     })),
   },
+  options: {
+    scales: {
+      x: {
+        ticks: {
+          font: {
+            size: 10,
+          },
+        },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          font: {
+            size: 10,
+          },
+        },
+      },
+    },
+  },
 });
+// Dans cet exemple, j'ai défini maxRotation à 90 degrés pour faire pivoter le texte de l'axe X à la verticale. Vous pouvez ajuster l'angle de rotation en modifiant la valeur de maxRotation selon vos préférences.
 
 // Ajoutez le canvas2 au-dessus du tableau2
 table2.parentNode.insertBefore(canvas2, table2);
