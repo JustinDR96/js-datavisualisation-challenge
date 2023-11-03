@@ -65,17 +65,6 @@ new Chart(ctx, {
   },
 });
 
-// let canvas2 = document.createElement("canvas");
-
-// // Configurez ses attributs
-// canvas2.id = "myChart2"; // ID du canvas
-// canvas2.width = 400; // Largeur du canvas
-// canvas2.height = 200; // Hauteur du canvas
-
-// let table2 = document.getElementById("table2");
-// table.parentNode.insertBefore(canvas2, table2);
-
-// let ctx2 = canvas2.getContext("2d");
 // Créez un élément <canvas> pour le deuxième tableau
 let canvas2 = document.createElement("canvas");
 
@@ -129,3 +118,4 @@ new Chart(ctx2, {
 
 // Ajoutez le canvas2 au-dessus du tableau2
 table2.parentNode.insertBefore(canvas2, table2);
+
