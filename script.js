@@ -119,3 +119,16 @@ new Chart(ctx2, {
 // Ajoutez le canvas2 au-dessus du tableau2
 table2.parentNode.insertBefore(canvas2, table2);
 
+//code with Ajax
+
+// Obtenez la référence à l'élément canvas
+let canvas3 = document.createElement("canvas");
+
+// Configurez les attributs du canvas (ID, largeur, hauteur)
+canvas3.id = "myChart3"; // ID du canvas
+canvas3.width = 400; // Largeur du canvas
+canvas3.height = 200; // Hauteur du canvas
+
+let heading = document.getElementById("firstHeading");
+
+heading.parentNode.insertBefore(canvas3, heading.nextSibling);
