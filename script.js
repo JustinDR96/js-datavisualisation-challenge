@@ -121,14 +121,81 @@ table2.parentNode.insertBefore(canvas2, table2);
 
 //code with Ajax
 
-// Obtenez la référence à l'élément canvas
-let canvas3 = document.createElement("canvas");
+$(document).ready(function () {
+  // Get a reference to the canvas element
+  let canvas3 = document.createElement("canvas");
 
-// Configurez les attributs du canvas (ID, largeur, hauteur)
-canvas3.id = "myChart3"; // ID du canvas
-canvas3.width = 400; // Largeur du canvas
-canvas3.height = 200; // Hauteur du canvas
+  // Set the canvas attributes (ID, width, height)
+  canvas3.id = "myChart3"; // Canvas ID
+  canvas3.width = 400; // Canvas width
+  canvas3.height = 200; // Canvas height
 
-let heading = document.getElementById("firstHeading");
+  let heading = document.getElementById("firstHeading");
 
-heading.parentNode.insertBefore(canvas3, heading.nextSibling);
+  heading.parentNode.insertBefore(canvas3, heading.nextSibling);
+
+  // Function to draw the chart on the canvas
+  function drawChart(data) {
+    const canvas = document.getElementById("myChart3");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the horizontal axis
+    ctx.beginPath();
+    ctx.moveTo(30, canvas.height - 30);
+    ctx.lineTo(canvas.width - 30, canvas.height - 30);
+    ctx.stroke();
+
+    // Draw the vertical axis
+    ctx.beginPath();
+    ctx.moveTo(30, canvas.height - 30);
+    ctx.lineTo(30, 30);
+    ctx.stroke();
+
+    // Draw the data points
+    ctx.beginPath();
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 2;
+    for (let i = 0; i < data.length; i++) {
+      const x = (i * (canvas.width - 60)) / (data.length - 1) + 30;
+      const y = (canvas.height - 60) * (1 - data[i].y / 100) + 30;
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  function fetchData() {
+    $.getJSON(
+      "https://canvasjs.com/services/data/datapoints.php",
+      function (data) {
+        drawChart(data);
+        updateChart();
+      }
+    );
+  }
+
+  function updateChart() {
+    $.getJSON(
+      "https://canvasjs.com/services/data/datapoints.php?xstart=" +
+        (dataPoints.length + 1) +
+        "&ystart=" +
+        dataPoints[dataPoints.length - 1].y +
+        "&length=1&type=json",
+      function (data) {
+        dataPoints.push({
+          x: parseInt(data[0][0]),
+          y: parseInt(data[0][1]),
+        });
+        drawChart(dataPoints);
+        setTimeout(updateChart, 1000);
+      }
+    );
+  }
+
+  let dataPoints = [];
+
+  // Start by fetching the initial data and drawing the chart
+  fetchData();
+});
