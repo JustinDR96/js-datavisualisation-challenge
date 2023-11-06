@@ -121,81 +121,98 @@ table2.parentNode.insertBefore(canvas2, table2);
 
 //code with Ajax
 
+// Get a reference to the canvas element
+let canvas3 = document.createElement("canvas");
+
+// Set the canvas attributes (ID, width, height)
+canvas3.id = "myChart3"; // Canvas ID
+canvas3.width = 400; // Canvas width
+canvas3.height = 100; // Canvas height
+
+let heading = document.getElementById("firstHeading");
+
+heading.parentNode.insertBefore(canvas3, heading.nextSibling);
 $(document).ready(function () {
-  // Get a reference to the canvas element
-  let canvas3 = document.createElement("canvas");
+  let chart;
+  let dataPoints = [];
 
-  // Set the canvas attributes (ID, width, height)
-  canvas3.id = "myChart3"; // Canvas ID
-  canvas3.width = 400; // Canvas width
-  canvas3.height = 200; // Canvas height
+  function fetchDataAndRenderChart() {
+    const url =
+      "https://canvasjs.com/services/data/datapoints.php?xstart=1&ystart=10&length=10&type=json";
 
-  let heading = document.getElementById("firstHeading");
+    const req = new XMLHttpRequest();
+    req.open("GET", url, true);
 
-  heading.parentNode.insertBefore(canvas3, heading.nextSibling);
+    req.onreadystatechange = function () {
+      if (req.readyState === 4 && req.status === 200) {
+        const data = JSON.parse(req.responseText);
+        dataPoints = data.map((point) => ({
+          x: point[0],
+          y: parseInt(point[1]),
+        }));
+        renderChart(dataPoints);
+      }
+    };
 
-  // Function to draw the chart on the canvas
-  function drawChart(data) {
-    const canvas = document.getElementById("myChart3");
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw the horizontal axis
-    ctx.beginPath();
-    ctx.moveTo(30, canvas.height - 30);
-    ctx.lineTo(canvas.width - 30, canvas.height - 30);
-    ctx.stroke();
-
-    // Draw the vertical axis
-    ctx.beginPath();
-    ctx.moveTo(30, canvas.height - 30);
-    ctx.lineTo(30, 30);
-    ctx.stroke();
-
-    // Draw the data points
-    ctx.beginPath();
-    ctx.strokeStyle = "blue";
-    ctx.lineWidth = 2;
-    for (let i = 0; i < data.length; i++) {
-      const x = (i * (canvas.width - 60)) / (data.length - 1) + 30;
-      const y = (canvas.height - 60) * (1 - data[i].y / 100) + 30;
-      ctx.lineTo(x, y);
-    }
-    ctx.stroke();
+    req.send();
   }
 
-  function fetchData() {
-    $.getJSON(
-      "https://canvasjs.com/services/data/datapoints.php",
-      function (data) {
-        drawChart(data);
-        updateChart();
-      }
-    );
+  function renderChart(dataPoints) {
+    const ctx = document.getElementById("myChart3").getContext("2d");
+
+    chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: dataPoints.map((datapoint) => datapoint.x),
+        datasets: [
+          {
+            label: "Live Chart with dataPoints from External JSON",
+            data: dataPoints.map((datapoint) => datapoint.y),
+            backgroundColor: "#ecf0f1",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    });
   }
 
   function updateChart() {
-    $.getJSON(
+    const url =
       "https://canvasjs.com/services/data/datapoints.php?xstart=" +
-        (dataPoints.length + 1) +
-        "&ystart=" +
-        dataPoints[dataPoints.length - 1].y +
-        "&length=1&type=json",
-      function (data) {
+      (dataPoints.length + 1) +
+      "&ystart=" +
+      dataPoints[dataPoints.length - 1].y +
+      "&length=1&type=json";
+
+    const req = new XMLHttpRequest();
+    req.open("GET", url, true);
+
+    req.onreadystatechange = function () {
+      if (req.readyState === 4 && req.status === 200) {
+        const data = JSON.parse(req.responseText);
         dataPoints.push({
           x: parseInt(data[0][0]),
           y: parseInt(data[0][1]),
         });
-        drawChart(dataPoints);
-        setTimeout(updateChart, 1000);
+
+        chart.data.labels.push(dataPoints[dataPoints.length - 1].x);
+        chart.data.datasets[0].data.push(dataPoints[dataPoints.length - 1].y);
+        chart.update();
       }
-    );
+    };
+
+    req.send();
   }
 
-  let dataPoints = [];
+  fetchDataAndRenderChart();
 
-  // Start by fetching the initial data and drawing the chart
-  fetchData();
+  setInterval(updateChart, 1000);
 });
